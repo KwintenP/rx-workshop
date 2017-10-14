@@ -7,7 +7,6 @@ import { Component, OnInit } from '@angular/core';
       <ul>
         <li>Server side filtering</li>
         <li>Cancelling of requests</li>
-        <li>Client side filtering</li>
       </ul>
     </div>
   `,
