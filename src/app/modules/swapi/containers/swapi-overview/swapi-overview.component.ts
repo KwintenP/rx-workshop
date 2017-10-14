@@ -32,17 +32,14 @@ export class SwapiOverviewComponent implements OnInit {
 
   searchData$ = new BehaviorSubject<{ searchTerm: string }>({searchTerm: ''});
   clientFilter$ = new ReplaySubject<{ showMale?: boolean, showFemale?: boolean, showNA?: boolean }>(1);
-  pageChange$ = new BehaviorSubject<{ type: 'RESET' | 'NEXT', page?: number }>({type: 'NEXT', page: 1});
+  pageChange$ = new BehaviorSubject<number>(1);
 
   constructor(private starwarService: StarWarsService) {
   }
 
   ngOnInit() {
-    const data$ = this.searchData$.combineLatest(this.pageChange$,
-      (search, page) => page.type === 'RESET' ? {search, page: 1} : {search, page: page.page})
-      .debounceTime(0)
-      .switchMap((data) => this.starwarService.getCharacters(data.page, data.search.searchTerm))
-      .shareReplay(1);
+    const data$ = this.searchData$.combineLatest(this.pageChange$)
+      .switchMap(([data, page]) => this.starwarService.getCharacters(page, data.searchTerm));
 
     this.people$ = data$
       .map((data) => data.results)
@@ -56,13 +53,10 @@ export class SwapiOverviewComponent implements OnInit {
 
     this.count$ = data$
       .map((data) => data.count);
-
-    this.page$ = this.pageChange$
-      .map(data => data.page);
   }
 
   searchClicked(searchTerm) {
-    this.pageChange$.next({type: 'RESET'});
+    this.pageChange$.next(1);
     this.searchData$.next({searchTerm});
   }
 
@@ -71,6 +65,6 @@ export class SwapiOverviewComponent implements OnInit {
   }
 
   pageChanged(page) {
-    this.pageChange$.next({type: 'NEXT', page});
+    this.pageChange$.next(page);
   }
 }
