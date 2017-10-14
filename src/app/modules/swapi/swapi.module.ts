@@ -10,6 +10,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import { PeopleFilterClientSideComponent } from './components/people-filter-client-side/people-filter-client-side.component';
 import {NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
 import { PaginationComponent } from './components/pagination/pagination.component';
+import { FeaturesComponent } from './components/features/features.component';
 
 @NgModule({
   imports: [
@@ -21,6 +22,6 @@ import { PaginationComponent } from './components/pagination/pagination.componen
   providers: [
     StarWarsService
   ],
-  declarations: [SwapiOverviewComponent, TopbarComponent, PeopleFilterComponent, PeopleListComponent, PeopleFilterClientSideComponent, PaginationComponent]
+  declarations: [SwapiOverviewComponent, TopbarComponent, PeopleFilterComponent, PeopleListComponent, PeopleFilterClientSideComponent, PaginationComponent, FeaturesComponent]
 })
 export class SwapiModule { }
