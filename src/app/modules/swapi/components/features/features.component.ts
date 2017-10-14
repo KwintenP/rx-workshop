@@ -6,10 +6,11 @@ import { Component, OnInit } from '@angular/core';
     <div>
       <ul>
         <li>Server side filtering</li>
+        <li>Cancelling of requests</li>
         <li>Client side filtering</li>
         <li>Paging</li>
-        <li>Cancelling of requests</li>
         <li>Page reset</li>
+        <li>Avoiding multiple requests</li>
       </ul>
     </div>
   `,
