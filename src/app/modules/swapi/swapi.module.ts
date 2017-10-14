@@ -9,6 +9,7 @@ import {HttpModule} from '@angular/http';
 import {ReactiveFormsModule} from '@angular/forms';
 import { PeopleFilterClientSideComponent } from './components/people-filter-client-side/people-filter-client-side.component';
 import {NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
+import { PaginationComponent } from './components/pagination/pagination.component';
 
 @NgModule({
   imports: [
@@ -20,6 +21,6 @@ import {NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
   providers: [
     StarWarsService
   ],
-  declarations: [SwapiOverviewComponent, TopbarComponent, PeopleFilterComponent, PeopleListComponent, PeopleFilterClientSideComponent]
+  declarations: [SwapiOverviewComponent, TopbarComponent, PeopleFilterComponent, PeopleListComponent, PeopleFilterClientSideComponent, PaginationComponent]
 })
 export class SwapiModule { }
