@@ -14,7 +14,7 @@ export class StarWarsService {
 
   }
 
-  // url: https://swapi.co/api/people/?page=...&search=...
+  // url: https://swapi.co/api/people/?page=...&search=..
   public getCharacters(page: number = 1, searchTerm?: string): Observable<StarWarsResult> {
 
   }
