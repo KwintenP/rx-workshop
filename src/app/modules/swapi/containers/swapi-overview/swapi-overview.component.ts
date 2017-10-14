@@ -24,25 +24,13 @@ import {Subject} from 'rxjs/Subject';
 })
 export class SwapiOverviewComponent implements OnInit {
   people$: Observable<Array<StarWarsCharacter>>;
-  count$: Observable<number>;
-
-  searchData$ = new BehaviorSubject<{ searchTerm: string }>({searchTerm: ''});
 
   constructor(private starwarService: StarWarsService) {
   }
 
   ngOnInit() {
-    const data$ = this.searchData$
-      .switchMap((data) => this.starwarService.getCharacters(1, data.searchTerm));
-
-    this.people$ = data$
-      .map((data) => data.results);
-
-    this.count$ = data$
-      .map((data) => data.count);
   }
 
   searchClicked(searchTerm) {
-    this.searchData$.next({searchTerm});
   }
 }
