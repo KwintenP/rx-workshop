@@ -4,3 +4,18 @@
   height: 100%;
   width: 100%;
 }
+
+.main {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.sidebar, .content{
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    margin-bottom: 10px;
+  }
+}
