@@ -24,7 +24,6 @@ import {Subject} from 'rxjs/Subject';
 })
 export class SwapiOverviewComponent implements OnInit {
   people$: Observable<Array<StarWarsCharacter>>;
-  count$: Observable<number>;
 
   searchData$ = new BehaviorSubject<{ searchTerm: string }>({searchTerm: ''});
 
@@ -37,9 +36,6 @@ export class SwapiOverviewComponent implements OnInit {
 
     this.people$ = data$
       .map((data) => data.results);
-
-    this.count$ = data$
-      .map((data) => data.count);
   }
 
   searchClicked(searchTerm) {
