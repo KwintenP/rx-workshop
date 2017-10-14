@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import {RouterModule} from '@angular/router';
 import {routes} from './app.routes';
 import {SwapiModule} from './modules/swapi/swapi.module';
+import {NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,7 @@ import {SwapiModule} from './modules/swapi/swapi.module';
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
-    SwapiModule
+    SwapiModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
