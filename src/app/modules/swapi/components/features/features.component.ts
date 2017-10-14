@@ -5,8 +5,7 @@ import { Component, OnInit } from '@angular/core';
   template: `
     <div>
       <ul>
-        <li>Server side filtering</li>
-        <li>Cancelling of requests</li>
+        <li>none so far :)</li>
       </ul>
     </div>
   `,
