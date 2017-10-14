@@ -4,6 +4,7 @@ import {StarWarsCharacter} from '../../entities/star-wars-character.entity';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-swapi-overview',
@@ -16,10 +17,8 @@ import {ReplaySubject} from 'rxjs/ReplaySubject';
       </div>
       <div class="content">
         <app-people-list [people]="people$ | async"></app-people-list>
-        {{count$ | async}}
-        <ngb-pagination [collectionSize]="count$ | async"
-                        (pageChange)="pageChange.next($event)"
-                        aria-label="Default pagination"></ngb-pagination>
+        <app-pagination [numberOfElements]="count$ | async"
+                        (pageChange)="pageChanged($event)"></app-pagination>
       </div>
     </div>
   `,
@@ -28,24 +27,25 @@ import {ReplaySubject} from 'rxjs/ReplaySubject';
 export class SwapiOverviewComponent implements OnInit {
   people$: Observable<Array<StarWarsCharacter>>;
   count$: Observable<number>;
+  page$: Observable<number>;
 
-  searchData = new BehaviorSubject<{ searchTerm: string }>({searchTerm: ''});
-  clientFilter = new ReplaySubject<{ showMale?: boolean, showFemale?: boolean, showNA?: boolean }>(1);
-  pageChange = new BehaviorSubject<number>(0);
+  searchData$ = new BehaviorSubject<{ searchTerm: string }>({searchTerm: ''});
+  clientFilter$ = new ReplaySubject<{ showMale?: boolean, showFemale?: boolean, showNA?: boolean }>(1);
+  pageChange$ = new BehaviorSubject<{ type: 'RESET' | 'NEXT', page?: number }>({type: 'NEXT', page: 1});
 
   constructor(private starwarService: StarWarsService) {
   }
 
   ngOnInit() {
-    const page$ = this.pageChange
-      .map(val => val + 1);
-
-    const data$ = this.searchData.combineLatest(page$)
-      .switchMap(([data, page]) => this.starwarService.getCharacters(page, data.searchTerm));
+    const data$ = this.searchData$.combineLatest(this.pageChange$,
+      (search, page) => page.type === 'RESET' ? {search, page: 1} : {search, page: page.page})
+      .debounceTime(0)
+      .switchMap((data) => this.starwarService.getCharacters(data.page, data.search.searchTerm))
+      .shareReplay(1);
 
     this.people$ = data$
       .map((data) => data.results)
-      .combineLatest(this.clientFilter, (results, filter) => {
+      .combineLatest(this.clientFilter$, (results, filter) => {
         return results.filter(character =>
           character.gender === 'male' && filter.showMale ||
           character.gender === 'female' && filter.showFemale ||
@@ -55,14 +55,21 @@ export class SwapiOverviewComponent implements OnInit {
 
     this.count$ = data$
       .map((data) => data.count);
+
+    this.page$ = this.pageChange$
+      .map(data => data.page);
   }
 
   searchClicked(searchTerm) {
-    this.pageChange.next(0);
-    this.searchData.next({searchTerm});
+    this.pageChange$.next({type: 'RESET'});
+    this.searchData$.next({searchTerm});
   }
 
   filterChanged(val) {
-    this.clientFilter.next(val);
+    this.clientFilter$.next(val);
+  }
+
+  pageChanged(page) {
+    this.pageChange$.next({type: 'NEXT', page});
   }
 }
