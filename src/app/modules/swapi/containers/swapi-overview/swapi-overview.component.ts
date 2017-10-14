@@ -14,6 +14,7 @@ import {Subject} from 'rxjs/Subject';
       <div class="sidebar">
         <app-people-filter (search)="searchClicked($event)"></app-people-filter>
         <app-people-filter-client-side (filterChanged)="filterChanged($event)"></app-people-filter-client-side>
+        <app-features></app-features>
       </div>
       <div class="content">
         <app-people-list [people]="people$ | async"></app-people-list>
