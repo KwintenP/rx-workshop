@@ -18,8 +18,6 @@ import {Subject} from 'rxjs/Subject';
       </div>
       <div class="content">
         <app-people-list [people]="people$ | async"></app-people-list>
-        <app-pagination [numberOfElements]="count$ | async"
-                        (pageChange)="pageChanged($event)"></app-pagination>
       </div>
     </div>
   `,
@@ -28,18 +26,16 @@ import {Subject} from 'rxjs/Subject';
 export class SwapiOverviewComponent implements OnInit {
   people$: Observable<Array<StarWarsCharacter>>;
   count$: Observable<number>;
-  page$: Observable<number>;
 
   searchData$ = new BehaviorSubject<{ searchTerm: string }>({searchTerm: ''});
   clientFilter$ = new ReplaySubject<{ showMale?: boolean, showFemale?: boolean, showNA?: boolean }>(1);
-  pageChange$ = new BehaviorSubject<number>(1);
 
   constructor(private starwarService: StarWarsService) {
   }
 
   ngOnInit() {
-    const data$ = this.searchData$.combineLatest(this.pageChange$)
-      .switchMap(([data, page]) => this.starwarService.getCharacters(page, data.searchTerm));
+    const data$ = this.searchData$
+      .switchMap((data) => this.starwarService.getCharacters(1, data.searchTerm));
 
     this.people$ = data$
       .map((data) => data.results)
@@ -56,15 +52,10 @@ export class SwapiOverviewComponent implements OnInit {
   }
 
   searchClicked(searchTerm) {
-    this.pageChange$.next(1);
     this.searchData$.next({searchTerm});
   }
 
   filterChanged(val) {
     this.clientFilter$.next(val);
-  }
-
-  pageChanged(page) {
-    this.pageChange$.next(page);
   }
 }
