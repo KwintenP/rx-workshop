@@ -14,9 +14,8 @@ export class StarWarsService {
 
   }
 
+  // url: https://swapi.co/api/people/?page=...&search=...
   public getCharacters(page: number = 1, searchTerm?: string): Observable<StarWarsResult> {
-    const queryParams = `page=${page}` + (searchTerm ? `&search=${searchTerm}` : '');
-    return this.http.get(`https://swapi.co/api/people/?${queryParams}`)
-      .map((response: Response) => response.json());
+
   }
 }
