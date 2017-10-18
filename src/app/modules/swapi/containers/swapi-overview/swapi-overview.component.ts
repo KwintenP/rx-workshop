@@ -4,7 +4,6 @@ import {StarWarsCharacter} from '../../entities/star-wars-character.entity';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
-import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-swapi-overview',
