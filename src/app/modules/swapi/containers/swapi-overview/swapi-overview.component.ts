@@ -45,19 +45,53 @@ export class SwapiOverviewComponent implements OnInit {
       );
     };
 
+    // @formatter:off
+    // searchData:     ----s------------------t----------
+    // pageChange$:    1--------2--------3----1----------
+    //                      -combineLatest-
+    //                 ----(s1)-(s2)-----(s3)-(s3)(t1)---
+    //                      -debounceTime-
+    //                 ----(s1)-(s2)-----(s3)-(t1)-------
+    //                      -switchMap-
+    //                 ----\     \       \     \
+    //                      -r|   ---r|   ----!  -----r|
+    //                 ------r-------r----------------r--
+    //                      -shareReplay-
+    // @formatter:on
     const data$ = this.searchData$
-      .combineLatest(this.pageChange$, (search, page) => page.type === 'RESET' ? {search, page: 1} : {search, page: page.page})
+      .combineLatest(this.pageChange$, (search, page) => page.type === 'RESET' ? {search, page: 1} : {
+        search,
+        page: page.page
+      })
       .debounceTime(0)
       .switchMap((data) => this.starwarService.getCharacters(data.page, data.search.searchTerm))
       .shareReplay(1);
 
+    // @formatter:off
+    // data$:         ------r-------r----------------r--
+    //                     -map-
+    //                ------r-------r----------------r--
+    // clientFilter$: c----------------------c-------r--
+    //                    -combineLatest-
+    //                ------f-------f--------f-------f--  f: filtered results
+    // @formatter:on
     this.people$ = data$
       .map((data) => data.results)
-      .combineLatest(filterTheCharactersBasedOnTheClienFilter);
+      .combineLatest(this.clientFilter$, filterTheCharactersBasedOnTheClienFilter);
 
+    // @formatter:off
+    // data$:         ------r-------r----------------r--
+    //                     -map-
+    //                ------c-------c----------------c--
+    // @formatter:on
     this.count$ = data$
       .map((data) => data.count);
 
+    // @formatter:off
+    // pageChanges$:         ------r-------r----------------r--
+    //                          -map-
+    //                       ------p-------p----------------p--
+    // @formatter:on
     this.page$ = this.pageChange$
       .map(data => data.page);
   }
