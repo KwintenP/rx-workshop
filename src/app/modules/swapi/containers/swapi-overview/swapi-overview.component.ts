@@ -37,21 +37,23 @@ export class SwapiOverviewComponent implements OnInit {
   }
 
   ngOnInit() {
-    const data$ = this.searchData$.combineLatest(this.pageChange$,
-      (search, page) => page.type === 'RESET' ? {search, page: 1} : {search, page: page.page})
+    const filterTheCharactersBasedOnTheClienFilter = (results, filter) => {
+      return results.filter(character =>
+        character.gender === 'male' && filter.showMale ||
+        character.gender === 'female' && filter.showFemale ||
+        character.gender === 'n/a' && filter.showNA
+      );
+    };
+
+    const data$ = this.searchData$
+      .combineLatest(this.pageChange$, (search, page) => page.type === 'RESET' ? {search, page: 1} : {search, page: page.page})
       .debounceTime(0)
       .switchMap((data) => this.starwarService.getCharacters(data.page, data.search.searchTerm))
       .shareReplay(1);
 
     this.people$ = data$
       .map((data) => data.results)
-      .combineLatest(this.clientFilter$, (results, filter) => {
-        return results.filter(character =>
-          character.gender === 'male' && filter.showMale ||
-          character.gender === 'female' && filter.showFemale ||
-          character.gender === 'n/a' && filter.showNA
-        );
-      });
+      .combineLatest(filterTheCharactersBasedOnTheClienFilter);
 
     this.count$ = data$
       .map((data) => data.count);
